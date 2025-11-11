@@ -1,0 +1,12 @@
+# Python virtual environment
+venv/
+theology_research/
+*.pyc
+__pycache__/
+
+# Output files
+research_outputs/
+
+# IDE / OS specific
+.DS_Store
+.vscode/
