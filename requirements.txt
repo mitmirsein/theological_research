@@ -1,2 +1,9 @@
-google-generativeai
-python-dotenv
+# Theology Research Orchestrator Requirements
+# 코드는 신형 SDK(`from google import genai`)를 사용한다 — 레거시 google-generativeai 아님.
+
+google-genai>=1.0.0
+python-dotenv>=1.0.0
+
+# Phase 6 시각화 (visualize_session.py)
+jinja2>=3.1.0
+markdown>=3.5.0

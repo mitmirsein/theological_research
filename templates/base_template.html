@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title | upper }}: RESEARCH REPORT</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Serif+KR:wght@300;400;600&family=Outfit:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['"Noto Serif KR"', 'serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        paper: '#f8fafc',
+                        ink: '#0f172a',
+                        accent: {
+                            teal: '#0f766e',
+                            gold: '#b45309',
+                            red: '#be123c'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --sidenote-width: 280px;
+        }
+
+        html.lenis {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
+        .lenis.lenis-scrolling iframe {
+            pointer-events: none;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #0f766e;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+            mix-blend-mode: multiply;
+        }
+
+        #cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(15, 118, 110, 0.1);
+            border-color: transparent;
+        }
+
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 50;
+            mix-blend-mode: multiply;
+            opacity: 0.05;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr min(65ch, 90%) 1fr;
+            gap: 0;
+        }
+
+        @media (min-width: 1536px) {
+            .layout-grid {
+                grid-template-columns: 1fr 65ch minmax(300px, 1fr);
+            }
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+        }
+
+        .mono-tag {
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+        }
+
+        .brutalist-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 2rem;
+            transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        .brutalist-card:hover {
+            border-color: #0f766e;
+            transform: translate(-4px, -4px);
+            box-shadow: 4px 4px 0 0 #0f766e;
+        }
+
+        ::selection {
+            background: #0f766e;
+            color: #ffffff;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0f766e;
+        }
+
+        .section-content p {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #334155;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-content ul,
+        .section-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-content li {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+
+        .footnote-ref {
+            color: #0f766e;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .footnote-ref:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <div id="cursor"></div>
+    <canvas id="canvas-bg"></canvas>
+    <div class="noise-overlay"></div>
+
+    <!-- HUD Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 border-b border-black/5 bg-paper/90 backdrop-blur-sm">
+        <div class="flex justify-between items-center px-6 py-3">
+            <div class="flex items-center gap-4">
+                <div class="w-3 h-3 bg-accent-teal animate-pulse"></div>
+                <span class="mono-tag text-ink scramble-text">{{ title | upper }}</span>
+            </div>
+            <div class="hidden lg:flex gap-4 flex-wrap justify-end max-w-[60%]">
+                <a href="#intro" class="mono-tag text-slate-500 hover:text-ink transition-colors nav-link">[00]</a>
+                {% for section in sections %}
+                <a href="#section-{{ loop.index }}"
+                    class="mono-tag text-slate-500 hover:text-ink transition-colors nav-link"
+                    title="{{ section.title }}">[{{ '%02d' % loop.index }}] {{ section.title.split()[0][:6] }}</a>
+                {% endfor %}
+                <a href="#references"
+                    class="mono-tag text-slate-500 hover:text-ink transition-colors nav-link">[REF]</a>
+            </div>
+            <div class="mono-tag text-accent-teal">
+                {{ sections | length }} SECTIONS
+            </div>
+        </div>
+        <div class="h-[1px] w-full bg-black/5">
+            <div id="progress-bar" class="h-full bg-accent-teal w-0"></div>
+        </div>
+    </nav>
+
+    <main class="layout-grid pt-32 pb-32">
+
+        <!-- Hero -->
+        <header id="intro"
+            class="col-start-2 flex flex-col justify-center min-h-[80vh] mb-32 border-l border-black/10 pl-8 md:pl-16 relative">
+            <div class="absolute -left-[1px] top-0 h-32 w-[1px] bg-accent-teal"></div>
+
+            <span class="mono-tag text-accent-teal mb-6 block scramble-text">/// SYSTEM:
+                THEOLOGICAL_RESEARCH_PIPELINE</span>
+
+            <h1 class="text-6xl md:text-8xl lg:text-9xl font-black leading-none mb-8 text-ink tracking-tighter scramble-text"
+                data-scramble-speed="2">
+                {{ title | upper }}
+            </h1>
+
+            <div class="flex flex-col md:flex-row gap-8 items-start border-t border-black/10 pt-8">
+                <div class="md:w-1/3">
+                    <span class="mono-tag text-slate-500 block mb-2">SUBTITLE</span>
+                    <p class="font-serif text-xl italic text-slate-700">{{ subtitle }}</p>
+                </div>
+                <div class="md:w-2/3">
+                    <span class="mono-tag text-slate-500 block mb-2">ABSTRACT</span>
+                    <p class="text-lg text-slate-600 leading-relaxed max-w-md">
+                        {{ abstract | safe }}
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Sections -->
+        {% for section in sections %}
+        <section id="section-{{ loop.index }}" class="col-start-2 space-y-12 mb-40">
+            <div class="flex items-baseline gap-4 border-b border-black/10 pb-4 mb-12">
+                <span class="text-4xl font-black text-slate-300">{{ '%02d' % loop.index }}</span>
+                <h2 class="text-4xl font-bold text-ink scramble-text">{{ section.title | upper }}</h2>
+            </div>
+
+            <div class="section-content">
+                {{ section.content | safe }}
+            </div>
+        </section>
+        {% endfor %}
+
+        <!-- Quote Break -->
+        {% if quote %}
+        <section class="col-start-1 col-end-4 bg-ink text-paper py-24 my-24 overflow-hidden relative">
+            <div class="layout-grid">
+                <div class="col-start-2 text-center relative z-10">
+                    <i data-lucide="quote" class="w-12 h-12 mx-auto mb-8"></i>
+                    <p class="text-4xl md:text-6xl font-black uppercase leading-tight tracking-tighter mb-8">
+                        "{{ quote.text }}"
+                    </p>
+                    <span class="mono-tag bg-paper text-ink px-3 py-1">{{ quote.author }}</span>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Data Archive -->
+        <section id="references" class="col-start-2 space-y-12 mb-40 border-t border-black/10 pt-24">
+            <div class="flex items-baseline gap-4 mb-8">
+                <span class="text-4xl font-black text-slate-300">{{ '%02d' % (sections|length + 1) }}</span>
+                <h2 class="text-4xl font-bold text-ink scramble-text">DATA ARCHIVE</h2>
+            </div>
+
+            <div class="brutalist-card bg-slate-50 border-slate-200">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-4 mb-6">
+                    <span class="mono-tag text-accent-teal">SELECTED BIBLIOGRAPHY</span>
+                    <span class="mono-tag text-slate-500">{{ footnotes | length }} REFS</span>
+                </div>
+
+                <ul
+                    class="space-y-2 font-serif text-sm text-slate-600 leading-relaxed max-h-[600px] overflow-y-auto pr-4">
+                    {% for footnote in footnotes %}
+                    <li class="border-l-2 border-accent-teal pl-3 hover:text-ink transition-colors"
+                        id="fn-{{ loop.index }}">
+                        {{ footnote.citation | safe }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="col-start-1 col-end-4 border-t border-black/10 py-24 bg-ink text-paper">
+            <div class="layout-grid">
+                <div class="col-start-2 flex flex-col md:flex-row justify-between items-end">
+                    <div>
+                        <h2 class="text-5xl font-black text-paper mb-4">END OF REPORT</h2>
+                        <p class="text-slate-400 font-mono text-sm">
+                            THEOLOGICAL DATA ANALYSIS UNIT<br>
+                            POWERED BY GEMINI SCHOLAR PIPELINE v1.7
+                        </p>
+                    </div>
+                    <div class="mt-8 md:mt-0">
+                        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+                            class="mono-tag border border-white/30 px-6 py-3 hover:bg-paper hover:text-ink transition-colors">
+                            BACK TO TOP [↑]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- 1. Lenis Smooth Scroll ---
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // --- 2. Custom Cursor ---
+        const cursor = document.getElementById('cursor');
+        const links = document.querySelectorAll('a, button, .brutalist-card');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            link.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // --- 3. Text Scramble Effect ---
+        class TextScramble {
+            constructor(el) {
+                this.el = el;
+                this.chars = '!<>-_\\/[]{}—=+*^?#________';
+                this.update = this.update.bind(this);
+            }
+            setText(newText) {
+                const oldText = this.el.innerText;
+                const length = Math.max(oldText.length, newText.length);
+                const promise = new Promise((resolve) => this.resolve = resolve);
+                this.queue = [];
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || '';
+                    const to = newText[i] || '';
+                    const start = Math.floor(Math.random() * 40);
+                    const end = start + Math.floor(Math.random() * 40);
+                    this.queue.push({ from, to, start, end });
+                }
+                cancelAnimationFrame(this.frameRequest);
+                this.frame = 0;
+                this.update();
+                return promise;
+            }
+            update() {
+                let output = '';
+                let complete = 0;
+                for (let i = 0, n = this.queue.length; i < n; i++) {
+                    let { from, to, start, end, char } = this.queue[i];
+                    if (this.frame >= end) {
+                        complete++;
+                        output += to;
+                    } else if (this.frame >= start) {
+                        if (!char || Math.random() < 0.28) {
+                            char = this.randomChar();
+                            this.queue[i].char = char;
+                        }
+                        output += `<span class="text-accent-teal">${char}</span>`;
+                    } else {
+                        output += from;
+                    }
+                }
+                this.el.innerHTML = output;
+                if (complete === this.queue.length) {
+                    this.resolve();
+                } else {
+                    this.frameRequest = requestAnimationFrame(this.update);
+                    this.frame++;
+                }
+            }
+            randomChar() {
+                return this.chars[Math.floor(Math.random() * this.chars.length)];
+            }
+        }
+
+        const phrases = document.querySelectorAll('.scramble-text');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const fx = new TextScramble(el);
+                    fx.setText(el.innerText);
+                    observer.unobserve(el);
+                }
+            });
+        });
+        phrases.forEach(el => observer.observe(el));
+
+        // --- 4. Interactive Canvas ---
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                for (let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(15, 118, 110, ${0.1 - dist / 1500})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        // --- 5. Scroll Progress ---
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        });
+
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

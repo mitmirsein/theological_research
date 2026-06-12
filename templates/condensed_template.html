@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title | upper }}: BRIEF REPORT</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Serif+KR:wght@300;400;600&family=Outfit:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['"Noto Serif KR"', 'serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        paper: '#f8fafc',
+                        ink: '#0f172a',
+                        accent: {
+                            teal: '#0f766e',
+                            gold: '#b45309',
+                            red: '#be123c'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html.lenis {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #0f766e;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+            mix-blend-mode: multiply;
+        }
+
+        #cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(15, 118, 110, 0.1);
+            border-color: transparent;
+        }
+
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 50;
+            mix-blend-mode: multiply;
+            opacity: 0.05;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr min(65ch, 90%) 1fr;
+            gap: 0;
+        }
+
+        @media (min-width: 1536px) {
+            .layout-grid {
+                grid-template-columns: 1fr 65ch minmax(300px, 1fr);
+            }
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+        }
+
+        .mono-tag {
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+        }
+
+        .brutalist-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        .brutalist-card:hover {
+            border-color: #0f766e;
+            transform: translate(-4px, -4px);
+            box-shadow: 4px 4px 0 0 #0f766e;
+        }
+
+        .keyword-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 1px solid;
+            transition: all 0.2s;
+        }
+
+        .keyword-tag:hover {
+            background: #0f766e;
+            color: white;
+            border-color: #0f766e;
+        }
+
+        ::selection {
+            background: #0f766e;
+            color: #ffffff;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0f766e;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <div id="cursor"></div>
+    <canvas id="canvas-bg"></canvas>
+    <div class="noise-overlay"></div>
+
+    <!-- HUD Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 border-b border-black/5 bg-paper/90 backdrop-blur-sm">
+        <div class="flex justify-between items-center px-6 py-3">
+            <div class="flex items-center gap-4">
+                <div class="w-3 h-3 bg-accent-teal animate-pulse"></div>
+                <span class="mono-tag text-ink scramble-text">THEO_RESEARCH // BRIEF</span>
+            </div>
+            <div class="hidden md:flex gap-6">
+                <a href="#intro" class="mono-tag text-slate-500 hover:text-ink transition-colors">[00]</a>
+                {% for section in sections %}
+                <a href="#section-{{ loop.index }}" class="mono-tag text-slate-500 hover:text-ink transition-colors">[{{
+                    '%02d' % loop.index }}]</a>
+                {% endfor %}
+                <a href="#references" class="mono-tag text-slate-500 hover:text-ink transition-colors">[REF]</a>
+            </div>
+            <div class="mono-tag text-accent-teal">
+                CONDENSED VIEW
+            </div>
+        </div>
+        <div class="h-[1px] w-full bg-black/5">
+            <div id="progress-bar" class="h-full bg-accent-teal w-0"></div>
+        </div>
+    </nav>
+
+    <main class="layout-grid pt-32 pb-32">
+
+        <!-- Hero -->
+        <div id="intro" class="col-start-2 col-span-12 lg:col-span-8 mb-24">
+            <h1 class="text-6xl md:text-8xl font-black mb-8 tracking-tight leading-none scramble-text">
+                {{ title | upper }}
+            </h1>
+
+            <div class="flex gap-3 mt-8">
+                <span class="keyword-tag border-accent-teal text-accent-teal">{{ sections | length }} SECTIONS</span>
+                <span class="keyword-tag border-slate-400 text-slate-500">{{ footnotes | length }} REFS</span>
+            </div>
+        </div>
+
+        <!-- Section Cards -->
+        {% for section in sections %}
+        <section id="section-{{ loop.index }}" class="col-start-2 mb-16">
+            <div class="brutalist-card group">
+                <div class="flex items-baseline gap-4 mb-4">
+                    <span class="text-3xl font-black text-slate-300">{{ '%02d' % loop.index }}</span>
+                    <h2 class="text-2xl font-bold text-ink">{{ section.title | upper }}</h2>
+                </div>
+
+                <!-- One-liner essence -->
+                <p class="font-serif text-lg text-slate-700 mb-6 border-l-2 border-accent-teal pl-4">
+                    {{ section.essence }}
+                </p>
+
+                <!-- Keywords -->
+                {% if section.keywords %}
+                <div class="flex flex-wrap gap-2">
+                    {% for keyword in section.keywords %}
+                    <span class="keyword-tag border-slate-300 text-slate-600">{{ keyword }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        {% endfor %}
+
+        <!-- Quote (if available) -->
+        {% if quote %}
+        <section class="col-start-1 col-end-4 bg-ink text-paper py-16 my-16 overflow-hidden relative">
+            <div class="layout-grid">
+                <div class="col-start-2 text-center relative z-10">
+                    <i data-lucide="quote" class="w-10 h-10 mx-auto mb-6"></i>
+                    <p class="text-3xl md:text-5xl font-black uppercase leading-tight tracking-tighter mb-6">
+                        "{{ quote.text }}"
+                    </p>
+                    <span class="mono-tag bg-paper text-ink px-3 py-1">{{ quote.author }}</span>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Data Archive -->
+        <section id="references" class="col-start-2 mb-24 border-t border-black/10 pt-16">
+            <div class="flex items-baseline gap-4 mb-8">
+                <span class="text-3xl font-black text-slate-300">REF</span>
+                <h2 class="text-2xl font-bold text-ink">DATA ARCHIVE</h2>
+            </div>
+
+            <div class="brutalist-card bg-slate-50">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-4">
+                    <span class="mono-tag text-accent-teal">SELECTED BIBLIOGRAPHY</span>
+                    <span class="mono-tag text-slate-500">{{ footnotes | length }} REFS</span>
+                </div>
+
+                <ul class="space-y-2 font-serif text-sm text-slate-600 leading-relaxed max-h-[300px] overflow-y-auto">
+                    {% for footnote in footnotes %}
+                    <li class="border-l-2 border-accent-teal pl-3 hover:text-ink transition-colors">
+                        {{ footnote.citation | safe }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="col-start-1 col-end-4 border-t border-black/10 py-16 bg-ink text-paper">
+            <div class="layout-grid">
+                <div class="col-start-2 flex flex-col md:flex-row justify-between items-end">
+                    <div>
+                        <h2 class="text-4xl font-black text-paper mb-3">END // BRIEF</h2>
+                        <p class="text-slate-400 font-mono text-sm">
+                            GEMINI SCHOLAR PIPELINE v1.7<br>
+                            CONDENSED VIEW
+                        </p>
+                    </div>
+                    <div class="mt-6 md:mt-0 flex gap-4">
+                        <a href="{{ full_report_url }}"
+                            class="mono-tag border border-white/30 px-4 py-2 hover:bg-paper hover:text-ink transition-colors">
+                            FULL REPORT →
+                        </a>
+                        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+                            class="mono-tag border border-white/30 px-4 py-2 hover:bg-paper hover:text-ink transition-colors">
+                            TOP [↑]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        // Lenis Smooth Scroll
+        const lenis = new Lenis({ duration: 1.2, smooth: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const links = document.querySelectorAll('a, button, .brutalist-card, .keyword-tag');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            link.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // Text Scramble
+        class TextScramble {
+            constructor(el) {
+                this.el = el;
+                this.chars = '!<>-_\\/[]{}—=+*^?#';
+                this.update = this.update.bind(this);
+            }
+            setText(newText) {
+                const oldText = this.el.innerText;
+                const length = Math.max(oldText.length, newText.length);
+                const promise = new Promise((resolve) => this.resolve = resolve);
+                this.queue = [];
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || '', to = newText[i] || '';
+                    const start = Math.floor(Math.random() * 40);
+                    this.queue.push({ from, to, start, end: start + Math.floor(Math.random() * 40) });
+                }
+                this.frame = 0;
+                this.update();
+                return promise;
+            }
+            update() {
+                let output = '', complete = 0;
+                for (let i = 0; i < this.queue.length; i++) {
+                    let { from, to, start, end, char } = this.queue[i];
+                    if (this.frame >= end) { complete++; output += to; }
+                    else if (this.frame >= start) {
+                        char = this.chars[Math.floor(Math.random() * this.chars.length)];
+                        output += `<span class="text-accent-teal">${char}</span>`;
+                    } else { output += from; }
+                }
+                this.el.innerHTML = output;
+                if (complete === this.queue.length) this.resolve();
+                else { requestAnimationFrame(this.update); this.frame++; }
+            }
+        }
+        document.querySelectorAll('.scramble-text').forEach(el => {
+            new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) new TextScramble(el).setText(el.innerText);
+            }).observe(el);
+        });
+
+        // Canvas Background
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(0,0,0,0.1)';
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+        for (let i = 0; i < 30; i++) particles.push(new Particle());
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.update(); p.draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j], dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 120) {
+                        ctx.strokeStyle = `rgba(15,118,110,${0.1 - dist / 1200})`;
+                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const scrolled = (document.documentElement.scrollTop / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        });
+
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

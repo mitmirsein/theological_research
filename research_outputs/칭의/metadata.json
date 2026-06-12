@@ -1,0 +1,160 @@
+{
+  "research_topic": "칭의(Rechtfertigung, Justification)",
+  "rag_store_id": "fileSearchStores/store1835194-0w16vdnd1tdd",
+  "timestamp": "20251111_203912",
+  "execution_time_seconds": 284.797878,
+  "session_directory": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912",
+  "final_report": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/FINAL_COMPREHENSIVE_REPORT.md",
+  "individual_reports": [
+    {
+      "specialist": "사본학 전문가 (Manuscript Specialist)",
+      "stage": "Stage 0",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 0_manuscript_specialist_report.md",
+      "success": true
+    },
+    {
+      "specialist": "본문 비평가 (Textual Critic)",
+      "stage": "Stage 0",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 0_textual_critic_report.md",
+      "success": true
+    },
+    {
+      "specialist": "히브리어 전문가 (Hebrew Expert)",
+      "stage": "Stage 0",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 0_hebrew_expert_report.md",
+      "success": true
+    },
+    {
+      "specialist": "헬라어 전문가 (Greek Expert)",
+      "stage": "Stage 0",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 0_greek_expert_report.md",
+      "success": true
+    },
+    {
+      "specialist": "성경 주해가 (Biblical Exegete)",
+      "stage": "Stage 1",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 1_bible_exegete_report.md",
+      "success": true
+    },
+    {
+      "specialist": "구약학자 (Old Testament Scholar)",
+      "stage": "Stage 1",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 1_ot_scholar_report.md",
+      "success": true
+    },
+    {
+      "specialist": "신약학자 (New Testament Scholar)",
+      "stage": "Stage 1",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 1_nt_scholar_report.md",
+      "success": true
+    },
+    {
+      "specialist": "교부학 전문가 (Patristics Specialist)",
+      "stage": "Stage 1",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 1_patristics_specialist_report.md",
+      "success": true
+    },
+    {
+      "specialist": "종교개혁 전문가 (Reformation Specialist)",
+      "stage": "Stage 1",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 1_reformation_specialist_report.md",
+      "success": true
+    },
+    {
+      "specialist": "교회사학자 (Church Historian)",
+      "stage": "Stage 1",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 1_church_historian_report.md",
+      "success": true
+    },
+    {
+      "specialist": "성경신학자 (Biblical Theologian)",
+      "stage": "Stage 2",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 2_biblical_theologian_report.md",
+      "success": true
+    },
+    {
+      "specialist": "조직신학자 (Systematic Theologian)",
+      "stage": "Stage 2",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 2_systematic_theologian_report.md",
+      "success": true
+    },
+    {
+      "specialist": "구원론 분석가 (Soteriology Analyst)",
+      "stage": "Stage 2",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 2_soteriology_analyst_report.md",
+      "success": true
+    },
+    {
+      "specialist": "기독론 전문가 (Christology Expert)",
+      "stage": "Stage 2",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 2_christology_expert_report.md",
+      "success": true
+    },
+    {
+      "specialist": "철학신학자 (Philosophical Theologian)",
+      "stage": "Stage 2",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 2_philosophical_theologian_report.md",
+      "success": true
+    },
+    {
+      "specialist": "현대신학 분석가 (Modern Theology Analyst)",
+      "stage": "Stage 2",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 2_modern_theology_analyst_report.md",
+      "success": true
+    },
+    {
+      "specialist": "기독교 윤리학자 (Christian Ethicist)",
+      "stage": "Stage 2",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 2_ethics_theologian_report.md",
+      "success": true
+    },
+    {
+      "specialist": "편향 및 전통 감사관 (Bias and Tradition Auditor)",
+      "stage": "Stage 2",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 2_bias_tradition_auditor_report.md",
+      "success": true
+    },
+    {
+      "specialist": "인용 검증가 (Citation Validator)",
+      "stage": "Stage 2",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 2_citation_validator_report.md",
+      "success": true
+    },
+    {
+      "specialist": "교회론 전문가 (Ecclesiology Specialist)",
+      "stage": "Stage 3",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 3_ecclesiology_specialist_report.md",
+      "success": true
+    },
+    {
+      "specialist": "실천신학자 (Practical Theologian)",
+      "stage": "Stage 3",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 3_practical_theologian_report.md",
+      "success": true
+    },
+    {
+      "specialist": "설교학자 (Homiletical Theologian)",
+      "stage": "Stage 3",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 3_homiletical_theologian_report.md",
+      "success": true
+    },
+    {
+      "specialist": "목회상담가 (Pastoral Counselor)",
+      "stage": "Stage 3",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 3_pastoral_counselor_report.md",
+      "success": true
+    },
+    {
+      "specialist": "학제간 조정자 (Interdisciplinary Coordinator)",
+      "stage": "Stage 3",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 3_interdisciplinary_coordinator_report.md",
+      "success": true
+    },
+    {
+      "specialist": "최종 편집자 (Final Editor)",
+      "stage": "Stage 3",
+      "file": "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/MS_Brain.nosync/Theology_Research/research_outputs/20251111_203912/Stage 3_final_editor_report.md",
+      "success": true
+    }
+  ]
+}
